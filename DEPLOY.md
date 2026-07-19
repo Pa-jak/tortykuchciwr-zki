@@ -77,6 +77,13 @@ git push
 
 Po pushu strona aktualizuje się sama w ciągu ~1 minuty (webhook).
 
+## Znane ograniczenie domeny tymczasowej
+
+Link do strony udostępniaj **bez `www.`** — `https://forestgreen-wolverine-476671.hostingersite.com`.
+Certyfikat Hostingera (`*.hostingersite.com`) nie obejmuje wariantu `www.` domeny tymczasowej,
+więc `www.forestgreen-...` pokaże błąd zabezpieczeń. Na docelowej domenie problem nie wystąpi
+(certyfikat obejmie `domena.pl` i `www.domena.pl`).
+
 ## Uwagi bezpieczeństwa
 
 - **Nigdy nie commituj** `info.txt` ani `config.php` (oba są w `.gitignore`).
