@@ -65,6 +65,7 @@ INSERT INTO items (type, name, description, sort_order) VALUES
 ('cake', 'Torty okazjonalne', 'Na komunię, chrzest czy urodziny — motyw dopasowany do tematu przyjęcia.', 2),
 ('cake', 'Torty bezowe', 'Lekkie, chrupiące spody bezowe przełożone kremem i owocami.', 3),
 ('cake', 'Torty z owocami sezonowymi', 'Świeże owoce sezonowe podkreślające smak i wygląd tortu.', 4),
+('cake', 'Torty urodzinowe', 'Kolorowe torty dla dzieci i dorosłych — z motywem, ulubionymi postaciami i smakami solenizanta.', 5),
 ('team', 'Właścicielka', 'Odkąd pamiętam, wierzę, że najlepsze chwile smakują wyjątkowo. Kuchciwróżka to moje domowe, rodzinne miejsce, w którym każdy tort i słodki stół powstaje ręcznie — z uważnością na detale i Waszą historię.', 1);
 
 INSERT INTO testimonials (quote, author, sort_order) VALUES
