@@ -9,7 +9,7 @@ uploads/*
 
 # Mockup i oryginalne materiały (lokalne, nie deployujemy; logo jest w assets/)
 mockup/
-Logo.jpg
+/Logo.jpg
 
 # Systemowe
 Thumbs.db
