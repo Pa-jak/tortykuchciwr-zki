@@ -1,0 +1,16 @@
+# Dane wrażliwe — NIGDY nie commitować
+info.txt
+config.php
+
+# Zdjęcia wgrywane przez panel (żyją tylko na serwerze)
+uploads/*
+!uploads/.htaccess
+!uploads/index.html
+
+# Mockup i oryginalne materiały (lokalne, nie deployujemy; logo jest w assets/)
+mockup/
+Logo.jpg
+
+# Systemowe
+Thumbs.db
+.DS_Store
