@@ -53,41 +53,68 @@ function galleryImage(array $g): void {
     }
 }
 
-function oferta_children_are_leaves(array $children): bool {
-    foreach ($children as $c) {
-        if (!empty($c['children'])) return false;
+function render_oferta_content(array $children, bool $showImages, int $level = 5): void {
+    if (empty($children)) {
+        echo '<p class="oferta-empty">Wkrótce więcej.</p>';
+        return;
     }
-    return true;
-}
-
-function render_oferta_children(array $children, bool $showImages): void {
-    if (empty($children)) return;
-    if (oferta_children_are_leaves($children)) {
+    $tag = 'h' . min($level, 6);
+    $leaves = [];
+    $branches = [];
+    foreach ($children as $c) {
+        if (empty($c['children'])) $leaves[] = $c;
+        else $branches[] = $c;
+    }
+    if ($leaves) {
         if ($showImages) {
             echo '<div class="grid cards">';
-            foreach ($children as $c) {
+            foreach ($leaves as $c) {
                 echo '<article class="card">';
                 echo '<div class="card-media ratio-4-3">';
                 itemImage($c);
                 echo '</div>';
-                echo '<div class="card-body"><h3>' . e($c['name']) . '</h3></div>';
+                echo '<div class="card-body"><' . $tag . '>' . e($c['name']) . '</' . $tag . '></div>';
                 echo '</article>';
             }
             echo '</div>';
         } else {
             echo '<ul class="oferta-items">';
-            foreach ($children as $c) {
+            foreach ($leaves as $c) {
                 echo '<li>' . e($c['name']) . '</li>';
             }
             echo '</ul>';
         }
-        return;
     }
-    foreach ($children as $c) {
-        echo '<details class="oferta-group"><summary>' . e($c['name']) . '</summary>';
-        render_oferta_children($c['children'], $showImages);
-        echo '</details>';
+    foreach ($branches as $c) {
+        echo '<div class="oferta-subgroup">';
+        echo '<' . $tag . '>' . e($c['name']) . '</' . $tag . '>';
+        render_oferta_content($c['children'], $showImages, $level + 1);
+        echo '</div>';
     }
+}
+
+function render_oferta_block(array $branch): void {
+    $subs = $branch['children'];
+    $showImages = (bool)$branch['show_images'];
+    echo '<div class="oferta-block" data-oferta-block>';
+    echo '<h3>' . e($branch['name']) . '</h3>';
+    if ($subs) {
+        echo '<div class="filters" role="group" aria-label="Filtry: ' . e($branch['name']) . '">';
+        echo '<button class="filter-btn active" type="button" data-filter="all">Wszystkie</button>';
+        foreach ($subs as $sub) {
+            echo '<button class="filter-btn" type="button" data-filter="cat-' . (int)$sub['id'] . '">' . e($sub['name']) . '</button>';
+        }
+        echo '</div>';
+        echo '<div class="oferta-groups">';
+        foreach ($subs as $sub) {
+            echo '<div class="oferta-cat-group" data-cat="cat-' . (int)$sub['id'] . '">';
+            echo '<h4 class="oferta-cat-title">' . e($sub['name']) . '</h4>';
+            render_oferta_content($sub['children'], $showImages);
+            echo '</div>';
+        }
+        echo '</div>';
+    }
+    echo '</div>';
 }
 ?><!DOCTYPE html>
 <html lang="pl">
@@ -151,12 +178,9 @@ echo json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRE
             <p class="overline">Oferta</p>
             <h2>Słodki stół i torty</h2>
             <p class="section-intro">Każdy element oferty projektujemy indywidualnie — smaki, wielkość i zdobienia dopasowujemy do Waszej uroczystości. <strong>Wycena zawsze ustalana indywidualnie</strong> po rozmowie.</p>
-            <div class="oferta-branches">
+            <div class="oferta-blocks">
                 <?php foreach ($categories as $branch): ?>
-                <div class="oferta-branch">
-                    <h3><?php echo e($branch['name']); ?></h3>
-                    <?php render_oferta_children($branch['children'], (bool)$branch['show_images']); ?>
-                </div>
+                <?php render_oferta_block($branch); ?>
                 <?php endforeach; ?>
             </div>
         </section>

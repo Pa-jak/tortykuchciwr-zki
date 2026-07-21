@@ -951,67 +951,53 @@ img {
     .admin-table tr { margin-bottom: 1rem; border: 1px solid var(--bg-alt); border-radius: var(--radius-sm); padding: 0.6rem; }
 }
 
-.oferta-branches {
+.oferta-blocks {
     display: grid;
-    gap: 3rem;
-    max-width: 900px;
+    gap: 3.5rem;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
-.oferta-branch h3 {
+.oferta-block > h3 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    margin-bottom: 1.1rem;
+}
+
+.oferta-cat-group {
+    margin-bottom: 2rem;
+}
+
+.oferta-cat-group:last-child {
+    margin-bottom: 0;
+}
+
+.oferta-cat-title {
+    font-size: 1.4rem;
+    color: var(--heading);
     margin-bottom: 1rem;
 }
 
-.oferta-group {
-    background: var(--white);
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow);
-    margin-bottom: 0.7rem;
-    padding: 0.9rem 1.2rem;
+.oferta-subgroup {
+    margin-top: 1.4rem;
 }
 
-.oferta-group summary {
-    font-weight: 600;
+.oferta-subgroup h5,
+.oferta-subgroup h6 {
+    font-family: var(--font-head);
     color: var(--heading);
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
+    font-size: 1.15rem;
+    margin: 0 0 0.6rem;
 }
 
-.oferta-group summary::-webkit-details-marker {
-    display: none;
-}
-
-.oferta-group summary::after {
-    content: '+';
-    font-size: 1.3rem;
-    color: var(--primary);
-    line-height: 1;
-}
-
-.oferta-group[open] summary::after {
-    content: '−';
-}
-
-.oferta-group .oferta-group {
-    box-shadow: none;
-    margin-top: 0.7rem;
-    margin-bottom: 0;
-    padding: 0.7rem 0 0 1rem;
-    border-left: 2px solid var(--bg-alt);
-    border-radius: 0;
-}
-
-.oferta-group .grid.cards,
-.oferta-group .oferta-items {
-    margin-top: 0.8rem;
+.oferta-empty {
+    color: var(--muted);
+    font-style: italic;
+    margin: 0;
 }
 
 .oferta-items {
     list-style: none;
-    margin: 0.6rem 0 0;
+    margin: 0.4rem 0 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
@@ -1019,11 +1005,19 @@ img {
 }
 
 .oferta-items li {
-    background: var(--bg-alt);
+    background: var(--white);
     color: var(--text);
+    border: 1px solid oklch(85% 0.04 340);
     border-radius: 999px;
-    padding: 0.35rem 0.9rem;
-    font-size: 0.9rem;
+    padding: 0.4rem 1rem;
+    font-size: 0.92rem;
+}
+
+.oferta-block .card-body h4,
+.oferta-block .card-body h5,
+.oferta-block .card-body h6 {
+    font-size: 1.2rem;
+    margin-bottom: 0;
 }
 
 .admin-cat-node {

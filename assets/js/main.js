@@ -1,6 +1,22 @@
 (function () {
     'use strict';
 
+    // Oferta — filtry per blok (jak w galerii, ale niezależne dla każdego bloku)
+    document.querySelectorAll('[data-oferta-block]').forEach(function (block) {
+        const btns = block.querySelectorAll('.filter-btn');
+        const groups = block.querySelectorAll('.oferta-cat-group');
+        btns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                btns.forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                groups.forEach(function (g) {
+                    g.style.display = (filter === 'all' || g.dataset.cat === filter) ? '' : 'none';
+                });
+            });
+        });
+    });
+
     // Galeria — filtry i lightbox
     const gallery = document.getElementById('gallery');
     const filterButtons = document.querySelectorAll('.filter-btn');
