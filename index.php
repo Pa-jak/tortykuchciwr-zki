@@ -59,16 +59,14 @@ function render_oferta_content(array $children, bool $showImages, int $level = 5
         return;
     }
     $tag = 'h' . min($level, 6);
-    $leaves = [];
-    $branches = [];
-    foreach ($children as $c) {
-        if (empty($c['children'])) $leaves[] = $c;
-        else $branches[] = $c;
-    }
-    if ($leaves) {
+    // Zachowujemy kolejność (sort_order): kolejne "liście" grupujemy w karty/pigułki,
+    // a napotkaną podkategorię renderujemy w miejscu, nie przenosząc jej na koniec.
+    $run = [];
+    $flush = function () use (&$run, $showImages, $tag) {
+        if (!$run) return;
         if ($showImages) {
             echo '<div class="grid cards">';
-            foreach ($leaves as $c) {
+            foreach ($run as $c) {
                 echo '<article class="card">';
                 echo '<div class="card-media ratio-4-3">';
                 itemImage($c);
@@ -79,18 +77,25 @@ function render_oferta_content(array $children, bool $showImages, int $level = 5
             echo '</div>';
         } else {
             echo '<ul class="oferta-items">';
-            foreach ($leaves as $c) {
+            foreach ($run as $c) {
                 echo '<li>' . e($c['name']) . '</li>';
             }
             echo '</ul>';
         }
+        $run = [];
+    };
+    foreach ($children as $c) {
+        if (empty($c['children'])) {
+            $run[] = $c;
+        } else {
+            $flush();
+            echo '<div class="oferta-subgroup">';
+            echo '<' . $tag . '>' . e($c['name']) . '</' . $tag . '>';
+            render_oferta_content($c['children'], $showImages, $level + 1);
+            echo '</div>';
+        }
     }
-    foreach ($branches as $c) {
-        echo '<div class="oferta-subgroup">';
-        echo '<' . $tag . '>' . e($c['name']) . '</' . $tag . '>';
-        render_oferta_content($c['children'], $showImages, $level + 1);
-        echo '</div>';
-    }
+    $flush();
 }
 
 function render_oferta_block(array $branch): void {
@@ -155,7 +160,7 @@ echo json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRE
 </head>
 <body>
     <header class="hero">
-        <div class="sparkles" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="sparkles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
         <div class="hero-inner">
             <img src="/assets/logo.jpg" alt="Torty Kuchciwróżki" class="hero-logo">
             <h1><?php echo $heroHeadline; ?></h1>
