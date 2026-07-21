@@ -37,3 +37,19 @@ function load_testimonials(): array {
 function load_faq(): array {
     return db()->query('SELECT id, question, answer, sort_order FROM faq ORDER BY sort_order, id')->fetchAll();
 }
+
+function load_categories(): array {
+    return db()->query('SELECT id, parent_id, name, image, show_images, sort_order FROM categories ORDER BY sort_order ASC, id ASC')->fetchAll();
+}
+
+function build_category_tree(array $flat, ?int $parentId = null): array {
+    $branch = [];
+    foreach ($flat as $row) {
+        $rowParent = $row['parent_id'] === null ? null : (int)$row['parent_id'];
+        if ($rowParent === $parentId) {
+            $row['children'] = build_category_tree($flat, (int)$row['id']);
+            $branch[] = $row;
+        }
+    }
+    return $branch;
+}

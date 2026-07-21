@@ -10,7 +10,7 @@ require_admin();
 
 $entity = $_POST['entity'] ?? 'item';
 $id = (int)($_POST['id'] ?? 0);
-$anchor = $_POST['return_anchor'] ?? ($entity === 'gallery' ? 'gallery' : 'torty');
+$anchor = $_POST['return_anchor'] ?? ($entity === 'gallery' ? 'gallery' : 'oferta');
 
 try {
     $file = $_FILES['image'] ?? null;
@@ -22,6 +22,15 @@ try {
             $newFile = handle_upload($file, $oldFile ? (string)$oldFile : null);
             if ($newFile) {
                 $stmt = db()->prepare('UPDATE gallery SET image = ? WHERE id = ?');
+                $stmt->execute([$newFile, $id]);
+            }
+        } elseif ($entity === 'category') {
+            $old = db()->prepare('SELECT image FROM categories WHERE id = ?');
+            $old->execute([$id]);
+            $oldFile = $old->fetchColumn();
+            $newFile = handle_upload($file, $oldFile ? (string)$oldFile : null);
+            if ($newFile) {
+                $stmt = db()->prepare('UPDATE categories SET image = ? WHERE id = ?');
                 $stmt->execute([$newFile, $id]);
             }
         } else {

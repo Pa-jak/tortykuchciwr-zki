@@ -33,13 +33,12 @@ $loggedIn = is_logged_in();
 
 if ($loggedIn) {
     $settings = load_settings();
-    $desserts = load_items('dessert');
-    $cakes = load_items('cake');
     $team = load_items('team');
     $testimonials = load_testimonials();
     $faq = load_faq();
     $gallery = load_gallery();
     $galleryTags = ['Wesele', 'Komunia', 'Chrzciny', 'Urodziny'];
+    $categoryTree = build_category_tree(load_categories());
 }
 
 function admin_thumb(?string $file): string {
@@ -191,12 +190,77 @@ function setting_val(string $key, string $default = ''): string {
                         <p><button type="submit" class="btn btn-primary">Dodaj</button></p>
                     </form>
                 </div>
-            </section>
+        </section>
+
         <?php
         }
 
-        render_items_table($desserts, 'dessert', 'slodkie-stoly');
-        render_items_table($cakes, 'cake', 'torty');
+        function render_category_node(array $node, int $depth = 0): void {
+            ?>
+            <div class="admin-cat-node" style="margin-left: <?php echo $depth * 1.5; ?>rem">
+                <div class="admin-cat-row">
+                    <?php echo admin_thumb($node['image']); ?>
+                    <form action="save.php" method="post" class="admin-inline-form admin-cat-form">
+                        <?php echo csrf_input(); ?>
+                        <input type="hidden" name="section" value="categories">
+                        <input type="hidden" name="return_anchor" value="oferta">
+                        <input type="hidden" name="id" value="<?php echo (int)$node['id']; ?>">
+                        <input type="hidden" name="cat_action" value="update">
+                        <input type="text" name="name" value="<?php echo e($node['name']); ?>" required>
+                        <label>Kolejność <input type="number" name="sort_order" value="<?php echo (int)$node['sort_order']; ?>" style="width:4rem"></label>
+                        <?php if ($depth === 0): ?>
+                        <label><input type="checkbox" name="show_images" value="1" <?php if (!empty($node['show_images'])) echo 'checked'; ?>> Zdjęcia w tej gałęzi</label>
+                        <?php endif; ?>
+                        <button type="submit" class="btn btn-primary">Zapisz</button>
+                        <button type="submit" name="cat_action" value="delete" class="btn btn-danger" onclick="return confirm('Usunąć tę pozycję razem z podkategoriami?')">Usuń</button>
+                    </form>
+                    <form action="upload.php" method="post" enctype="multipart/form-data" class="admin-upload-form">
+                        <?php echo csrf_input(); ?>
+                        <input type="hidden" name="entity" value="category">
+                        <input type="hidden" name="id" value="<?php echo (int)$node['id']; ?>">
+                        <input type="hidden" name="return_anchor" value="oferta">
+                        <input type="file" name="image" accept="image/jpeg,image/png,image/webp" required>
+                        <button type="submit" class="btn btn-secondary">Wgraj</button>
+                    </form>
+                </div>
+                <?php foreach ($node['children'] as $child): render_category_node($child, $depth + 1); endforeach; ?>
+                <form action="save.php" method="post" class="admin-inline-form admin-cat-add">
+                    <?php echo csrf_input(); ?>
+                    <input type="hidden" name="section" value="categories">
+                    <input type="hidden" name="return_anchor" value="oferta">
+                    <input type="hidden" name="parent_id" value="<?php echo (int)$node['id']; ?>">
+                    <input type="hidden" name="cat_action" value="add">
+                    <input type="text" name="name" placeholder="+ Dodaj podkategorię / pozycję" required>
+                    <input type="number" name="sort_order" value="0" style="width:4rem" title="Kolejność">
+                    <button type="submit" class="btn btn-secondary">Dodaj</button>
+                </form>
+            </div>
+            <?php
+        }
+        ?>
+
+        <section class="admin-section" id="oferta">
+            <h2>Oferta (drzewo kategorii)</h2>
+            <p style="color:var(--muted);margin-bottom:1rem">Dodawaj podkategorie i pozycje na dowolnym poziomie. Usunięcie węzła kasuje też wszystko pod nim. Zdjęcia wgrywasz przy pozycjach-liściach w gałęziach z włączoną opcją "Zdjęcia w tej gałęzi".</p>
+            <?php foreach ($categoryTree as $branch): render_category_node($branch, 0); ?>
+            <hr style="margin:1.5rem 0;border:none;border-top:1px solid var(--bg-alt)">
+            <?php endforeach; ?>
+            <div class="admin-add-box">
+                <h3>+ Dodaj nową gałąź główną</h3>
+                <form action="save.php" method="post" class="admin-form">
+                    <?php echo csrf_input(); ?>
+                    <input type="hidden" name="section" value="categories">
+                    <input type="hidden" name="return_anchor" value="oferta">
+                    <input type="hidden" name="cat_action" value="add">
+                    <p><input type="text" name="name" placeholder="Nazwa" required></p>
+                    <p><label>Kolejność <input type="number" name="sort_order" value="0"></label></p>
+                    <p><label><input type="checkbox" name="show_images" value="1"> Zdjęcia w tej gałęzi</label></p>
+                    <p><button type="submit" class="btn btn-primary">Dodaj</button></p>
+                </form>
+            </div>
+        </section>
+
+        <?php
         render_items_table($team, 'team', 'o-nas');
         ?>
 

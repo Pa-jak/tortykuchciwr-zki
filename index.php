@@ -23,13 +23,12 @@ $deliveryReach = e(setting('delivery_reach'));
 $seoTitle = e(setting('seo_title'));
 $seoDesc = e(setting('seo_description'));
 
-$desserts = load_items('dessert');
-$cakes = load_items('cake');
 $team = load_items('team');
 $gallery = load_gallery();
 $galleryTags = load_gallery_tags();
 $testimonials = load_testimonials();
 $faq = load_faq();
+$categories = build_category_tree(load_categories());
 
 function mediaUrl(?string $file): string {
     if (!$file) return '';
@@ -51,6 +50,43 @@ function galleryImage(array $g): void {
         echo '<img src="' . e(mediaUrl($g['image'])) . '" alt="' . e($tag) . '" loading="lazy">';
     } else {
         echo '<div class="placeholder" aria-label="' . e($tag) . '"><span>' . e($tag) . '</span></div>';
+    }
+}
+
+function oferta_children_are_leaves(array $children): bool {
+    foreach ($children as $c) {
+        if (!empty($c['children'])) return false;
+    }
+    return true;
+}
+
+function render_oferta_children(array $children, bool $showImages): void {
+    if (empty($children)) return;
+    if (oferta_children_are_leaves($children)) {
+        if ($showImages) {
+            echo '<div class="grid cards">';
+            foreach ($children as $c) {
+                echo '<article class="card">';
+                echo '<div class="card-media ratio-4-3">';
+                itemImage($c);
+                echo '</div>';
+                echo '<div class="card-body"><h3>' . e($c['name']) . '</h3></div>';
+                echo '</article>';
+            }
+            echo '</div>';
+        } else {
+            echo '<ul class="oferta-items">';
+            foreach ($children as $c) {
+                echo '<li>' . e($c['name']) . '</li>';
+            }
+            echo '</ul>';
+        }
+        return;
+    }
+    foreach ($children as $c) {
+        echo '<details class="oferta-group"><summary>' . e($c['name']) . '</summary>';
+        render_oferta_children($c['children'], $showImages);
+        echo '</details>';
     }
 }
 ?><!DOCTYPE html>
@@ -111,40 +147,16 @@ echo json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRE
 <?php endif; ?>
 
     <main>
-        <section class="section" id="slodkie-stoly">
+        <section class="section section-alt" id="oferta">
             <p class="overline">Oferta</p>
-            <h2>Słodkie stoły</h2>
-            <p class="section-intro">Słodki stół to serce przyjęcia — komponujemy go tak, by zachwycał okiem i smakiem.</p>
-            <div class="grid cards dessert-grid">
-                <?php foreach ($desserts as $item): ?>
-                <article class="card">
-                    <div class="card-media ratio-4-3">
-                        <?php itemImage($item); ?>
-                    </div>
-                    <div class="card-body">
-                        <h3><?php echo e($item['name']); ?></h3>
-                        <p><?php echo e($item['description']); ?></p>
-                    </div>
-                </article>
-                <?php endforeach; ?>
-            </div>
-        </section>
-
-        <section class="section section-alt" id="torty">
-            <p class="overline">Oferta</p>
-            <h2>Torty</h2>
-            <p class="section-intro">Każdy tort projektujemy indywidualnie — smak, wielkość i zdobienia dopasowujemy do Waszych potrzeb i sezonu. <strong>Wycena zawsze ustalana indywidualnie</strong> po rozmowie.</p>
-            <div class="grid cards cake-grid">
-                <?php foreach ($cakes as $item): ?>
-                <article class="card">
-                    <div class="card-media ratio-5-4">
-                        <?php itemImage($item); ?>
-                    </div>
-                    <div class="card-body">
-                        <h3><?php echo e($item['name']); ?></h3>
-                        <p><?php echo e($item['description']); ?></p>
-                    </div>
-                </article>
+            <h2>Słodki stół i torty</h2>
+            <p class="section-intro">Każdy element oferty projektujemy indywidualnie — smaki, wielkość i zdobienia dopasowujemy do Waszej uroczystości. <strong>Wycena zawsze ustalana indywidualnie</strong> po rozmowie.</p>
+            <div class="oferta-branches">
+                <?php foreach ($categories as $branch): ?>
+                <div class="oferta-branch">
+                    <h3><?php echo e($branch['name']); ?></h3>
+                    <?php render_oferta_children($branch['children'], (bool)$branch['show_images']); ?>
+                </div>
                 <?php endforeach; ?>
             </div>
         </section>

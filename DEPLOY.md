@@ -36,6 +36,19 @@ Trzeba tylko zaimportować schemat i dane startowe:
 
 To tworzy tabele i wypełnia stronę domyślną treścią (edytowalną potem w panelu admina).
 
+## 3a. Aktualizacja istniejącej bazy — sekcja Oferta (drzewo kategorii)
+
+Dotyczy baz, które były już zaimportowane PRZED wprowadzeniem sekcji „Oferta". Świeży import
+`schema.sql` (punkt 3) już zawiera nową strukturę — ten krok jest tylko dla działającej bazy produkcyjnej.
+
+1. hPanel → **Bazy danych → phpMyAdmin** → otwórz bazę `u950362364_torty`.
+2. Zakładka **Import** → wybierz plik `migration_oferta.sql` → **Wykonaj**.
+
+Tworzy tabelę `categories` z drzewem kategorii (Słodki stół + Torty) i usuwa stare płaskie pozycje
+„Słodkie stoły"/„Torty" z tabeli `items`. Zdjęcia starych pozycji zostają w `uploads/` jako nieużywane
+pliki — można je opcjonalnie skasować przez Menedżer plików. Zdjęcia do nowej gałęzi „Słodki stół"
+dodajesz potem w panelu admina (sekcja **Oferta**, opcja „Zdjęcia w tej gałęzi" włączona).
+
 ## 4. Utworzenie config.php na serwerze (jednorazowo)
 
 Plik `config.php` zawiera hasła i **celowo nie ma go w repo** (jest w `.gitignore`) —

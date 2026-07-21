@@ -148,6 +148,23 @@ try {
             }
             redirect_with_flash($_POST['return_anchor'] ?? 'gallery');
             break;
+
+        case 'categories':
+            $action = $_POST['cat_action'] ?? '';
+            if ($action === 'delete') {
+                db()->prepare('DELETE FROM categories WHERE id = ?')->execute([(int)($_POST['id'] ?? 0)]);
+            } elseif ($action === 'add') {
+                $parentId = isset($_POST['parent_id']) && $_POST['parent_id'] !== '' ? (int)$_POST['parent_id'] : null;
+                $showImages = isset($_POST['show_images']) ? 1 : 0;
+                $stmt = db()->prepare('INSERT INTO categories (parent_id, name, sort_order, show_images) VALUES (?, ?, ?, ?)');
+                $stmt->execute([$parentId, $_POST['name'] ?? '', (int)($_POST['sort_order'] ?? 0), $showImages]);
+            } else {
+                $showImages = isset($_POST['show_images']) ? 1 : 0;
+                $stmt = db()->prepare('UPDATE categories SET name = ?, sort_order = ?, show_images = ? WHERE id = ?');
+                $stmt->execute([$_POST['name'] ?? '', (int)($_POST['sort_order'] ?? 0), $showImages, (int)($_POST['id'] ?? 0)]);
+            }
+            redirect_with_flash($_POST['return_anchor'] ?? 'oferta');
+            break;
     }
 } catch (Throwable $e) {
     error_log('admin/save.php: ' . $e->getMessage());
