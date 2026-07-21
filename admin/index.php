@@ -54,11 +54,12 @@ function setting_val(string $key, string $default = ''): string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="/assets/logo.jpg?v=<?php echo @filemtime(__DIR__ . '/../assets/logo.jpg'); ?>">
     <title>Panel administracyjny — Torty Kuchciwróżki</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css?v=<?php echo @filemtime(__DIR__ . '/../assets/css/style.css'); ?>">
 </head>
 <body>
 <?php if (!$loggedIn): ?>
@@ -428,7 +429,7 @@ function setting_val(string $key, string $default = ''): string {
         </section>
     </main>
 
-    <script src="/assets/js/admin.js?v=1" defer></script>
+    <script src="/assets/js/admin.js?v=<?php echo @filemtime(__DIR__ . '/../assets/js/admin.js'); ?>" defer></script>
 <?php endif; ?>
 </body>
 </html>

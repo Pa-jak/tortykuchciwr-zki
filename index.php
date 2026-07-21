@@ -126,6 +126,8 @@ function render_oferta_block(array $branch): void {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="/assets/logo.jpg?v=<?php echo @filemtime(__DIR__ . '/assets/logo.jpg'); ?>">
+    <link rel="apple-touch-icon" href="/assets/logo.jpg?v=<?php echo @filemtime(__DIR__ . '/assets/logo.jpg'); ?>">
     <title><?php echo $seoTitle; ?></title>
     <meta name="description" content="<?php echo $seoDesc; ?>">
     <link rel="canonical" href="<?php echo $siteUrl; ?>/">
@@ -139,7 +141,7 @@ function render_oferta_block(array $branch): void {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/style.css?v=<?php echo @filemtime(__DIR__ . '/assets/css/style.css'); ?>">
     <script type="application/ld+json">
 <?php
 $ld = [
@@ -305,6 +307,6 @@ echo json_encode($ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRE
         <button class="lightbox-arrow lightbox-next" type="button" aria-label="Następne zdjęcie">›</button>
     </div>
 
-    <script src="/assets/js/main.js" defer></script>
+    <script src="/assets/js/main.js?v=<?php echo @filemtime(__DIR__ . '/assets/js/main.js'); ?>" defer></script>
 </body>
 </html>
