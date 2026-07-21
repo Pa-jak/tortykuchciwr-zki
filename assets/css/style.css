@@ -62,7 +62,9 @@ img {
 }
 
 .section {
-    padding: 4.5rem 1.25rem;
+    /* Treść w wyśrodkowanej kolumnie ~1000px (jak sekcja Oferta);
+       tło section-alt nadal idzie na całą szerokość ekranu. */
+    padding: 4.5rem max(1.25rem, (100% - 1000px) / 2);
 }
 
 .section-alt {
